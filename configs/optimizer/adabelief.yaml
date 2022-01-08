@@ -1,0 +1,7 @@
+fp16: True
+name: AdaBelief
+params:
+  lr: 1e-3
+  weight_decay: 1e-6
+  weight_decouple: True
+  rectify: True

@@ -1,0 +1,13 @@
+fp16: True
+name: AdamW
+wd_on_bias: True
+accumulation: 1
+
+params:
+  lr: 1e-4
+  eps: 1e-6
+  weight_decay: 1e-5
+
+
+layerwise_params:
+  encoder: 0.1

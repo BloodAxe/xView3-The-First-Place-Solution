@@ -1,0 +1,4 @@
+callback:
+  _target_: xview3.EMABatchCallback
+  decay: 0.995
+  use_num_updates: True

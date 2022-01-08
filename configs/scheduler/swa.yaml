@@ -1,0 +1,4 @@
+_target_: torch.optim.swa_utils.SWALR
+swa_start: 75
+swa_lr: 0.05
+anneal_strategy: cos

@@ -1,0 +1,49 @@
+_target_: xview3.centernet.models.CenterNetUNetModel.from_config
+config:
+  slug: b4_unet_s2
+  activation: silu
+  num_channels: ${dataset.num_channels}
+  num_extra_blocks: 0
+
+  encoder:
+    _target_: pytorch_toolbelt.modules.encoders.TimmB4Encoder
+    pretrained: True
+    activation: silu
+    layers:
+      - 1 # 4
+      - 2 # 8
+      - 3 # 16
+      - 4 # 32
+
+  decoder:
+    upsample_type: shuffle
+    block_type: IRBlock
+    channels:
+      - 256
+      - 384
+      - 512
+
+  head:
+    _target_: xview3.centernet.models.heads.DecoupledHeadGroupNormLateShuffle
+    classifier_dim: 128
+    objectness_dim: 128
+    size_dim: 64
+    offset_dim: 16
+    dropout_rate: 0.1
+    activation: silu
+    num_blocks: 3
+
+  box_coder:
+    _target_: xview3.centernet.MultilabelCircleNetCoder
+    image_size:
+      - 1024
+      - 1024
+    max_objects: 512
+    heatmap_encoding: umich
+    labels_encoding: circle
+
+    ignore_value:
+      _target_: xview3.ignore_value
+    fixed_radius: 3
+    labels_radius: 1
+    ignore_low_confidence_detections: ${dataset.ignore_low_confidence_detections}

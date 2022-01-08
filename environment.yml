@@ -1,0 +1,24 @@
+name: xview3
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9.2
+  - rasterio=1.2.9
+  - Shapely==1.7.1
+  - pip
+  - pip:
+    - torch==1.10.0+cu113
+    - torchvision==0.11.1+cu113
+    - Fire
+    - pandas
+    - scikit-image
+    - scikit-learn
+    - tifffile==2020.8.25
+    - albumentations>1.0
+    - hydra-core==1.1.0
+    - timm==0.4.12
+    - torch-optimizer==0.1.0
+    - git+https://github.com/BloodAxe/pytorch-toolbelt@e52fbed6cca16151423c4ae396256308696dfc8f
+    - git+https://github.com/BloodAxe/catalyst.git@e8798534b1f582c404c95456829eb7fffd94e716
+    - -f https://download.pytorch.org/whl/cu113/torch_stable.html

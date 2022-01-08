@@ -1,0 +1,21 @@
+slug: default
+channels:
+  vv:
+    _target_: A.Normalize
+    mean: 0.0
+    std: 50.0
+    max_pixel_value: 1.0
+
+  vh:
+    _target_: A.Normalize
+    mean: 0.0
+    std: 50.0
+    max_pixel_value: 1.0
+
+  bathymetry:
+    _target_: xview3.CubicRootNormalization
+
+  wind_direction:
+  wind_speed:
+  mask:
+

@@ -1,0 +1,25 @@
+slug: flips_safe
+
+# Modality-specific augmentations, applied to specific modality independently
+# Could be some noise, blur operations that does not introduce spatial changes.
+individual:
+  vv:
+  vh:
+  bathymetry:
+  wind_direction:
+  wind_speed:
+  mask:
+
+# Spatial transformations that are applied for image & boxes simultaneously
+spatial:
+  - _target_: A.HorizontalFlip
+    p: 0.5
+  - _target_: A.VerticalFlip
+    p: 0.5
+  - _target_: A.ShiftScaleRotate
+    scale_limit: 0.05
+    rotate_limit: 5
+    value:
+      _target_: xview3.nan_value
+    border_mode: 0 # cv2.BORDER_CONSTANT
+    p: 0.5

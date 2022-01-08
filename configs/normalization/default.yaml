@@ -1,0 +1,35 @@
+slug: fixed
+channels:
+  sar:
+    _target_: xview3.SigmoidNormalization
+    midpoint: -20.
+    temperature: 0.18
+
+  vv:
+    _target_: xview3.SigmoidNormalization
+    midpoint: -20.
+    temperature: 0.18
+
+  vh:
+    _target_: xview3.SigmoidNormalization
+    midpoint: -20.
+    temperature: 0.18
+
+  diff(vv,vh):
+    _target_: xview3.SigmoidNormalization
+    midpoint: -5.0
+    temperature: 0.18
+
+  mean(vv,vh):
+    _target_: xview3.SigmoidNormalization
+    midpoint: -20
+    temperature: 0.18
+
+  bathymetry:
+    _target_: xview3.CubicRootNormalization
+
+  wind_direction:
+  wind_speed:
+
+  mask:
+    _target_: A.NoOp

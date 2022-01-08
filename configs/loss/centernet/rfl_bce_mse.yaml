@@ -1,0 +1,33 @@
+aggregation: weighted_sum
+slug: rfl_bce_mse
+losses_weights:
+  losses/objectness: 1.0
+  losses/vessel: 1.0
+  losses/fishing: 1.0
+  losses/size: 0.1
+  losses/offset: 0.001
+losses:
+  - loss:
+      _target_: xview3.centernet.losses.MultilabelCenterTrimmedLoss
+      fraction: 0
+      samplewise: False
+      objectness_loss: rfl
+      classifier_loss: bce
+      size_loss: mse
+      offset_loss: mse
+      regularization_weight: 0
+      regularize_ignored: False
+    prefix: ''
+    target_key:
+      - CENTERNET_TARGET_OBJECTNESS_MAP
+      - CENTERNET_TARGET_VESSEL_MAP
+      - CENTERNET_TARGET_FISHING_MAP
+      - CENTERNET_TARGET_SIZE
+      - CENTERNET_TARGET_OFFSET
+    output_key:
+      - CENTERNET_OUTPUT_OBJECTNESS_MAP
+      - CENTERNET_OUTPUT_VESSEL_MAP
+      - CENTERNET_OUTPUT_FISHING_MAP
+      - CENTERNET_OUTPUT_SIZE
+      - CENTERNET_OUTPUT_OFFSET
+    weight: 1.0

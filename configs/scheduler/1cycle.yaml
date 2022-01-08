@@ -1,0 +1,5 @@
+scheduler_name: 1cycle
+eta_min: 1e-5
+init_lr: 5e-5
+warmup_fraction: 0.25
+decay_fraction: 0.4

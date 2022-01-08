@@ -1,0 +1,10 @@
+fp16: True
+name: SGD
+wd_on_bias: False
+accumulation: 1
+
+params:
+  lr: 5e-3
+  weight_decay: 1e-3
+  nesterov: True
+  momentum: 0.9

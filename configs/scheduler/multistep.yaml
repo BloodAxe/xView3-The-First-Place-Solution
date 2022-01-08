@@ -1,0 +1,7 @@
+scheduler_name: multistep
+gamma: 0.2
+milestones:
+  - 0.3
+  - 0.6
+  - 0.8
+  - 0.9

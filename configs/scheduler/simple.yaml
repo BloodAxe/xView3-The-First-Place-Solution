@@ -1,0 +1,2 @@
+scheduler_name: warmup_simple
+gamma: 0.2

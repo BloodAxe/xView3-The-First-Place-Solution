@@ -1,0 +1,26 @@
+slug: valid_sar_cv
+data_dir: ${oc.env:XVIEW3_DATA_DIR, "data"}
+
+fold: 0
+num_folds: 4
+
+splitter:
+  name: precomputed
+  split_csv: configs/dataset/valid_only_split.csv
+
+# If True, removes all objects with LOW confidence from training & validation.
+filter_low_confidence_objects: False
+
+# If True, sets IGNORE_LABEL on all labels (vessel, fishing, length) for that object.
+ignore_low_confidence_labels: False
+
+# If True, sets IGNORE_LABEL on all detection label for that object.
+ignore_low_confidence_detections: False
+
+# Define the number and order of channel in the input image
+num_channels: 2
+channels:
+  - vh
+  - vv
+
+

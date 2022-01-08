@@ -1,0 +1,17 @@
+epochs: 100
+early_stopping: 15
+
+show: True
+fast: False
+
+train_image_size: [1024, 1024]
+valid_image_size: [2048, 2048]
+
+loaders:
+  train:
+    batch_size: ${batch_size}
+    num_workers: 8
+
+  valid:
+    batch_size: 4
+    num_workers: 4

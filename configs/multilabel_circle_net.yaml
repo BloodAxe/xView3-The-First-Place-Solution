@@ -1,0 +1,45 @@
+defaults:
+  - dataset: valid_sar_cv
+  - augs: flips_light
+  - sampler: balanced
+  - normalization: default
+  - loss: centernet/rfl_bce_mse
+  - model: centernet/b4_unet_s2
+
+  - optimizer: adamw
+  - scheduler: cos
+
+  - train: default
+  - runner: default
+
+  - ema: disabled
+  - torch: default
+
+batch_size: 8
+
+channels_last: False
+
+# DDP Stuff
+local_rank: ${oc.env:LOCAL_RANK, 0}
+world_size: ${oc.env:WORLD_SIZE, 0}
+
+# Name of the experiment
+experiment: null
+
+seed: 42
+
+deterministic: False
+detect_anomaly: False
+find_unused: False
+
+transfer: null
+checkpoint: null
+
+# Hydra stuff
+hydra:
+  output_subdir: null # Disable saving of config files. We'll do that ourselves.
+  run:
+    dir: . # Set working dir to current directory
+  sweep:
+    dir: .
+    subdir: .

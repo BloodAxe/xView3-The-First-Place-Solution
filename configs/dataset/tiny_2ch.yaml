@@ -1,0 +1,25 @@
+slug: tiny_2ch
+data_dir: ${oc.env:XVIEW3_DATA_DIR, "data"}
+
+# Empty fold & num_folds means we will use pre-defined split into train/validation
+# If num_folds is non empty, we will split train set into K folds for proper OOF-validation and
+# official validation split will be our holdout set
+fold:
+num_folds:
+splitter: tiny
+
+# If True, removes all objects with LOW confidence from training & validation.
+filter_low_confidence_objects: False
+
+# If True, sets IGNORE_LABEL on all labels (vessel, fishing, length) for that object.
+ignore_low_confidence_labels: False
+
+# If True, sets IGNORE_LABEL on all detection label for that object.
+ignore_low_confidence_detections: False
+
+# Define the number and order of channel in the input image
+num_channels: 2
+channels:
+  - vh
+  - vv
+

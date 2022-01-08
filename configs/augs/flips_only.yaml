@@ -1,0 +1,18 @@
+slug: flips_only
+
+# Modality-specific augmentations, applied to specific modality independently
+# Could be some noise, blur operations that does not introduce spatial changes.
+individual:
+  vv:
+  vh:
+  bathymetry:
+  wind_direction:
+  wind_speed:
+  mask:
+
+# Spatial transformations that are applied for image & boxes simultaneously
+spatial:
+  - _target_: A.HorizontalFlip
+    p: 0.5
+  - _target_: A.VerticalFlip
+    p: 0.5

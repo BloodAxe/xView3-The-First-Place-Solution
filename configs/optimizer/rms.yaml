@@ -1,0 +1,12 @@
+fp16: True
+name: RMSProp
+wd_on_bias: True
+accumulation: 1
+
+params:
+  lr: 1e-2
+  alpha: 0.99
+  eps: 1e-6
+  weight_decay: 1e-4
+  momentum: 0.9
+  centered: False

@@ -1,0 +1,65 @@
+slug: flips_medium
+
+# Modality-specific augmentations, applied to specific modality independently
+# Could be some noise, blur operations that does not introduce spatial changes.
+individual:
+  vv:
+    - _target_: xview3.augmentations.UnclippedRandomBrightnessContrast
+      brightness_limit: 0.05
+      contrast_limit: 0.05
+      image_in_log_space: False
+      p: 0.5
+    - _target_: xview3.augmentations.UnclippedGaussNoise
+      image_in_log_space: False
+      var_limit:
+        - 0.0002
+        - 0.007
+      mean: 0
+      per_channel: True
+      p: 0.5
+  vh:
+    - _target_: xview3.augmentations.UnclippedRandomBrightnessContrast
+      image_in_log_space: False
+      brightness_limit: 0.05
+      contrast_limit: 0.05
+      p: 0.5
+    - _target_: xview3.augmentations.UnclippedGaussNoise
+      image_in_log_space: False
+      var_limit:
+        - 0.0002
+        - 0.007
+      mean: 0
+      per_channel: True
+      p: 0.5
+  bathymetry:
+  wind_direction:
+  wind_speed:
+  mask:
+
+# Spatial transformations that are applied for image & boxes simultaneously
+spatial:
+  - _target_: A.HorizontalFlip
+    p: 0.5
+
+  - _target_: A.VerticalFlip
+    p: 0.5
+
+  - _target_: xview3.augmentations.UnclippedRandomBrightnessContrast
+    image_in_log_space: False
+    brightness_limit: 1.0
+    contrast_limit: 0.1
+    p: 0.5
+
+  - _target_: A.ShiftScaleRotate
+    scale_limit: 0.1
+    rotate_limit: 5
+    value:
+      _target_: xview3.nan_value
+    border_mode: 0 # cv2.BORDER_CONSTANT
+    p: 0.5
+
+  - _target_: xview3.augmentations.ElasticTransform
+    alpha:
+      - 10
+      - 100
+    p: 0.25

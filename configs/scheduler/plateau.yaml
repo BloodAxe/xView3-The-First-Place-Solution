@@ -1,0 +1,5 @@
+scheduler_name: plateau
+min_lr: 1e-5
+mode: max
+factor: 0.25
+patience: 20

@@ -1,0 +1,11 @@
+#main_metric: loss
+#main_metric_minimize: True
+
+main_metric: metrics/aggregate
+main_metric_minimize: False
+
+#main_metric: metrics/mean_score
+#main_metric_minimize: False
+
+input_key: INPUT_IMAGE_KEY
+output_key:

@@ -1,0 +1,4 @@
+callback:
+  _target_: xview3.EMAEpochCallback
+  decay: 0.999
+  apply_after_epoch: 1

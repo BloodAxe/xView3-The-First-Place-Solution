@@ -1,0 +1,8 @@
+fp16: True
+name: Lamb
+wd_on_bias: True
+accumulation: 1
+params:
+  lr: 1e-3
+  eps: 1e-6
+  weight_decay: 1e-5

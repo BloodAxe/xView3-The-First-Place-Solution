@@ -1,0 +1,7 @@
+fp16: True
+name: RAdam
+accumulation: 4
+params:
+  lr: 1e-4
+  eps: 1e-6
+  weight_decay: 0

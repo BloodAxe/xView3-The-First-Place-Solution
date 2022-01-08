@@ -1,0 +1,17 @@
+slug: balanced
+sampler:
+num_samples: 8192
+crop_around_ship_p: 0.8
+
+sampler_type: random_crop # {each_object, random_crop}
+
+balance_crowd: True
+balance_near_shore: True
+
+
+balance_vessel_type: True
+balance_fishing_type: True
+
+balance_per_scene: False
+balance_location: True
+balance_folder: True

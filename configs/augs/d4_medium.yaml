@@ -1,0 +1,64 @@
+slug: d4_medium
+
+# Modality-specific augmentations, applied to specific modality independently
+# Could be some noise, blur operations that does not introduce spatial changes.
+individual:
+  vv:
+    - _target_: xview3.augmentations.UnclippedRandomBrightnessContrast
+      brightness_limit: 0.01
+      contrast_limit: 0.01
+      image_in_log_space: False
+      p: 0.5
+    - _target_: xview3.augmentations.UnclippedGaussNoise
+      image_in_log_space: False
+      var_limit:
+        - 0.0001
+        - 0.005
+      mean: 0
+      per_channel: True
+      p: 0.5
+  vh:
+    - _target_: xview3.augmentations.UnclippedRandomBrightnessContrast
+      image_in_log_space: False
+      brightness_limit: 0.01
+      contrast_limit: 0.01
+      p: 0.5
+    - _target_: xview3.augmentations.UnclippedGaussNoise
+      image_in_log_space: False
+      var_limit:
+        - 0.0001
+        - 0.005
+      mean: 0
+      per_channel: True
+      p: 0.5
+  bathymetry:
+  wind_direction:
+  wind_speed:
+  mask:
+
+# Spatial transformations that are applied for image & boxes simultaneously
+spatial:
+  - _target_: A.RandomRotate90
+    p: 1.0
+  - _target_: A.Transpose
+    p: 0.5
+  - _target_: xview3.augmentations.UnclippedRandomBrightnessContrast
+    image_in_log_space: False
+    brightness_limit: 0.5
+    contrast_limit: 0.05
+    p: 0.25
+  - _target_: A.ShiftScaleRotate
+    scale_limit: 0.1
+    rotate_limit: 25
+    value:
+      _target_: xview3.nan_value
+    border_mode: 0 # cv2.BORDER_CONSTANT
+    p: 0.5
+  - _target_: A.MedianBlur
+    blur_limit: 5
+    p: 0.1
+  - _target_: A.GaussianBlur
+    p: 0.1
+    blur_limit:
+      - 3
+      - 5

@@ -1,0 +1,12 @@
+slug: default
+sampler:
+num_samples: 8192
+crop_around_ship_p: 0.8
+
+sampler_type: random_crop # {each_object, random_crop}
+
+balance_crowd: False
+balance_near_shore: False
+balance_vessel_type: False
+balance_fishing_type: False
+balance_location: False
