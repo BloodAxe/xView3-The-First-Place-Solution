@@ -7,6 +7,9 @@ __all__ = ["RandomGridShuffle"]
 
 
 class RandomGridShuffle(A.RandomGridShuffle):
+    """
+    RandomGridShuffle with keypoints support
+    """
     def apply(self, img, tiles=None, **params):
         if tiles is None:
             tiles = []

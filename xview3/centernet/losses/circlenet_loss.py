@@ -1,5 +1,6 @@
 from functools import partial
 from typing import Dict
+from typing import Dict
 
 import torch
 from pytorch_toolbelt.losses import SoftBCEWithLogitsLoss, BinaryBiTemperedLogisticLoss, BinaryFocalLoss, BalancedBCEWithLogitsLoss

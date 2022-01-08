@@ -15,7 +15,8 @@ torchrun --standalone --nnodes=1 --nproc_per_node=2 train_multilabel.py\
     train.loaders.train.num_workers=6\
     train.loaders.valid.batch_size=4\
     train.loaders.valid.num_workers=4\
-    torch.channels_last=True checkpoint=/home/bloodaxe/develop/xView3/runs/211126_13_52_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold1/checkpoints_metrics_aggregate/last.pth
+    torch.channels_last=True
+
 
 torchrun --standalone --nnodes=1 --nproc_per_node=2 train_multilabel.py\
     model=centernet/b5_unet_s2\
@@ -31,7 +32,7 @@ torchrun --standalone --nnodes=1 --nproc_per_node=2 train_multilabel.py\
     train.loaders.train.num_workers=6\
     train.loaders.valid.batch_size=4\
     train.loaders.valid.num_workers=4\
-    torch.channels_last=True checkpoint=/home/bloodaxe/develop/xView3/runs/211126_15_31_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold2/checkpoints_metrics_aggregate/last.pth
+    torch.channels_last=True
 
 torchrun --standalone --nnodes=1 --nproc_per_node=2 train_multilabel.py\
     model=centernet/b5_unet_s2\
