@@ -5,6 +5,8 @@ It scores the first place on the public LB with aggregate score of 0.603 and the
 
 # Installation & Requirements
 
+`conda create -f environment.yml`
+
 # Prebuilt docker container
 
 `docker pull ekhvedchenyateam/xview3:72`
@@ -71,6 +73,14 @@ The presence of data leak caused some discrepancy in CV/LB scores, and by lookin
 Initially, I tried to set up a 4-fold leak-free cross-validation split. 
 However, I observed a significant CV/LB discrepancy and later switched to a leaky 4-fold split stratified by a number of fishing vessels and near-shore objects. I acknowledge that going with leaky validation was a risky move, yet after looking at the distribution of the geographic locations per train/validation/public test I was almost certain that holdout will also contain a data leak in it. 
 
+### Dataset imbalance
+    
+|      Split | Not Vessel | Vessel | Not Fishing | Fishing | Off-Shore | Near Shore | Near Shore & Vessel | Near Shore & Fishing |
+|-----------:|-----------:|-------:|------------:|--------:|----------:|-----------:|--------------------:|---------------------:|
+|      train |      16692 |  36375 |       23865 |   12510 |     63829 |        284 |                 135 |                   57 |
+| validation |       7148 |  11957 |        2930 |     961 |     13053 |       6171 |                4478 |                   25 |
+
+
 After getting to 0.5+ zone with SAR-only data I tried to include supplementary data (bathymetry, wind & ice mask) into the model. Unfortunately, all my attempts failed and did not bring any gains and I ditched this effort and kept using 2-channels SAR input. I think there are a couple of reasons why extra data didn't help:
 The limiting factor was labels quality, not the lack of signal in the input data. 
  * Bathymetry signal was not that important 
@@ -124,9 +134,9 @@ As a data augmentations pipeline, I used Albumentations[4] library for which I'v
 ## Hardware & Training Time
 The training was done using 2x3090 GPUs using PyTorch 1.9 in DDP/FP16/SyncBN mode.
 Training time:
-B4 - ~6 hours per fold
-B5 - ~9 hours per fold
-V2S - ~6hours per fold
+* B4 - ~6 hours per fold
+* B5 - ~9 hours per fold
+* V2S - ~6hours per fold
 
 # References
 - [1] https://arxiv.org/abs/1904.07850
@@ -183,20 +193,4 @@ loc_fscore	loc_fscore_shore	vessel_fscore	fishing_fscore	length_acc	aggregate	is
 
 ```
 
-## 07.09.21 Importance of the output stride (Tested on validation set)
 
-| Stride | loc_fscore         | loc_fscore_shore   | vessel_fscore      | fishing_fscore     | length_acc         |
-|-------:|:-------------------|:-------------------|:-------------------|:-------------------|:-------------------|
-|     16 | 0.9672289674438594 | 0.9181166837256909 | 0.9983920733562209 | 0.9994728518713759 | 0.9999999785560352 |
-|      8 | 0.9948235294117647 | 0.9729249171583286 | 0.999873572421931  | 0.9994783515910277 | 0.9999999785415944 |
-|      4 | 0.9997658627955982 | 0.9847407525764958 | 0.9999581607464123 | 1.0                | 0.9999999785510294 |
-|      2 | 0.9999219664455716 | 0.9851461427886918 | 1.0                | 1.0                | 0.9999999785488739 |
-|      1 | 1.0                | 0.9853892215568862 | 1.0                | 1.0                | 0.9999999785488739 |
-
-
-## 08.09.21 Dataset imbalance
-    
-|      Split | Not Vessel | Vessel | Not Fishing | Fishing | Off-Shore | Near Shore | Near Shore & Vessel | Near Shore & Fishing |
-|-----------:|-----------:|-------:|------------:|--------:|----------:|-----------:|--------------------:|---------------------:|
-|      train |      16692 |  36375 |       23865 |   12510 |     63829 |        284 |                 135 |                   57 |
-| validation |       7148 |  11957 |        2930 |     961 |     13053 |       6171 |                4478 |                   25 |
