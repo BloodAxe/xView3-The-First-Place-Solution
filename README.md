@@ -175,22 +175,3 @@ Training time:
 | Fishing    | 0.1836 | 0.3673 | 0.3673 | 0.448  | 0.3877  | 0.35078 |
 | Aggregate  | 0.5829 | 0.5110 | 0.5217 | 0.6072 | 0.4944  | 0.5557  |
 
-# Notes
-
-## Nms with kernel size of 3 seems to give optimal performance
-
-heatmap_nms, ks=3
-heatmap_nms, ks=5
-tight_heatmap_nms, ks=3
-tight_heatmap_nms, ks=5
-
-```
-loc_fscore	loc_fscore_shore	vessel_fscore	fishing_fscore	length_acc	aggregate	is_vessel_threshold	is_fishing_threshold	objectness_threshold
-0.799654	0.471729			0.880184		0.725389		0.63118	    0.593101	0.714286			0.102041				0.5
-0.797854	0.457613			0.880431		0.725389		0.631185	0.589553	0.714286			0.102041				0.5
-0.79516 	0.477541			0.879449		0.723514		0.630893	0.590231	0.714286			0.102041				0.5
-0.798902	0.470016			0.880092		0.725389		0.631419	0.592293	0.714286			0.102041				0.5
-
-```
-
-
