@@ -3,8 +3,6 @@ from typing import List, Dict, Tuple, Optional, Union
 
 import cv2
 import numpy as np
-import rasterio
-from rasterio.windows import Window
 
 __all__ = [
     "stack_multichannel_image",
@@ -27,6 +25,9 @@ channel_name_to_file_name = {
 
 
 def read_tiff(image_fname: str, crop_coords: Optional[Tuple[Tuple[int, int], Tuple[int, int]]] = None) -> np.ndarray:
+    import rasterio
+    from rasterio.windows import Window
+
     window = None
     if crop_coords is not None:
         (row_start, row_stop), (col_start, col_stop) = crop_coords
