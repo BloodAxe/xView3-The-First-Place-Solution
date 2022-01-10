@@ -14,7 +14,10 @@ use conda to create the xview3 environment that should be self-contained and rea
 
 For running the inference of the final solution run the following script:
 
-`python submit_multilabel_ensemble.py configs/inference/1128_b5_b4_vs2_fliplr.yaml`
+```
+export XVIEW3_DIR=/path/to/dataset/root
+python submit_multilabel_ensemble.py configs/inference/1128_b5_b4_vs2_fliplr.yaml
+```
 
 It will download models from the GitHub, trace the model ensemble and use it for optimize inference. 
 Tracing itself is quite memory-demanding process and has been tested to work on 24Gb GPUs. 
@@ -23,9 +26,9 @@ If you encounter issues with running this step, copy and put [traced_ensemble.ji
 ## Training
 
 There are separate training scripts included for each model. They are indended for 2x3090 setup, but you may adjust them to your hardward:
-* `sh scripts/b4_unet_s2.sh`
-* `sh scripts/b5_unet_s2.sh`
-* `sh scripts/v2s_unet_s2_full.sh`
+* `XVIEW3_DIR=/path/to/dataset/root sh scripts/b4_unet_s2.sh`
+* `XVIEW3_DIR=/path/to/dataset/root sh scripts/b5_unet_s2.sh`
+* `XVIEW3_DIR=/path/to/dataset/root sh scripts/v2s_unet_s2_full.sh`
 
 ## Prebuilt docker container
 

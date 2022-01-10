@@ -124,7 +124,11 @@ def model_from_checkpoint(checkpoint_config: Union[str, Dict], **kwargs) -> Tupl
     else:
         checkpoint_name = checkpoint_config
 
-        checkpoint = torch.load(checkpoint_name, map_location="cpu")
+        if os.path.isfile(checkpoint_name):
+            checkpoint = torch.load(checkpoint_name, map_location="cpu")
+        else:
+            checkpoint = torch.hub.load_state_dict_from_url(checkpoint_name)
+
         model_config = checkpoint["checkpoint_data"]["config"]["model"]
 
     model_state_dict = checkpoint["model_state_dict"]
