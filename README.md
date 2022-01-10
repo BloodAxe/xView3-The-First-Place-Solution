@@ -3,11 +3,33 @@
 This repository contains source code and pretrained models for my (Eugene Khvedchenya) solution to xView 3 Challenge (https://iuu.xview.us/).
 It scores the first place on the public LB with aggregate score of 0.603 and the first place on the holdout LB with aggregate score 0.617.
 
-# Installation & Requirements
+# Installation & Reproducing results
+
+## Inference
+
+To reproduce the winning submission results, first you need to install the required packages. The easiest way is to 
+use conda to create the xview3 environment that should be self-contained and ready to run inference and train scripts:
 
 `conda create -f environment.yml`
 
-# Prebuilt docker container
+For running the inference of the final solution run the following script:
+
+`python submit_multilabel_ensemble.py configs/inference/1128_b5_b4_vs2_fliplr.yaml`
+
+It will download models from the GitHub, trace the model ensemble and use it for optimize inference. 
+Tracing itself is quite memory-demanding process and has been tested to work on 24Gb GPUs. 
+If you encounter issues with running this step, copy and put [traced_ensemble.jit](https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/traced_ensemble.jit) to `submissions/1128_b5_b4_vs2_fliplr` folder.
+
+## Training
+
+There are separate training scripts included for each model. They are indended for 2x3090 setup, but you may adjust them to your hardward:
+* `sh scripts/b4_unet_s2.sh`
+* `sh scripts/b5_unet_s2.sh`
+* `sh scripts/v2s_unet_s2_full.sh`
+
+## Prebuilt docker container
+
+The 1:1 docker container used for final submission is available via Docker Hub:
 
 `docker pull ekhvedchenyateam/xview3:72`
 
@@ -24,8 +46,9 @@ It scores the first place on the public LB with aggregate score of 0.603 and the
 For this challenge, I designed a custom neural network model CircleNet. It is an Encoder-Decoder architecture inspired by CenterNet[1] and U-Net[2] architectures. In a nutshell, it's a single-stage object detection model tailored for predicting tiny (just a few pixels), tightly packed objects. The model uses a pre-trained feature extractor [5] (encoder) and U-Net decoder to produce an intermediate feature map (stride 2) that is then fed to the model's head. 
 A CircleNet head predicts objectness map, offset length, and two dense classification labels - whether the object in question is a vessel and whether it's fishing or not. Since the competition data contained only object lengths, I've changed the size regression head of the CenterNet to predict only one component  - the object length (in pixels). 
 The reasoning behind utilizing such a high-resolution output for dense prediction is two-fold:
-Spatial resolution for SAR imagery is 10m/pixel, which causes most ships to occupy just a few pixels in the image.
-Vessels/Non-Vessels can be located close to each other. 
+* Spatial resolution for SAR imagery is 10m/pixel, which causes most ships to occupy just a few pixels in the image.
+* Vessels/Non-Vessels can be located extremely close to each other. 
+
 
 By using a finer output map, I wanted to avoid predictions from 'sticking' and being suppressed at the non-maximum suppression. 
 I further empirically proved this statement by measuring the localization f1 score for encoding-decoding ground-truth labels. The table below shows that increasing prediction maps stride leads to degraded performance.
@@ -101,20 +124,28 @@ As mentioned earlier, the quality of the data was a key limiting factor in my op
 * Missing annotations for clearly present objects and vice versa.
 * Partially missing data for fishing/vessel labels and object lengths.  
 
-To address possible label noise in fishing/vessel classification 
-I trained classification heads with label smoothing of 0.05. Apart from label smoothing I also tried training with bi-tempered loss and excluding k% samples with the largest classification loss from a training batch. In practice, label smoothing loss demonstrated the best classification scores and more clearly visible separation in output distributions.
+To address possible label noise in fishing/vessel classification
+I trained classification heads with label smoothing of 0.05. 
+Apart from label smoothing I also tried training with bi-tempered loss and excluding k% samples with the largest classification loss from a training batch. 
+
+In practice, label smoothing loss demonstrated the best classification scores and more clearly visible separation in output distributions.
 For many objects, ground-truth annotation for fishing/vessel was not available and although the objectness and length outputs could be trained, classification heads did not receive training signals. To alleviate this, I applied Shannon's entropy regularization for outputs of the classification head for the objects with unknown labels. This enforced model to move predictions either to 0 or 1 even for objects with missing ground-truth status. Unfortunately, I haven't figured out how to apply any self-supervised learning for length regression and simply ignored missing values for this task.
 As for the errors in the ground truth, fortunately, there were not many of them in the validation dataset, so I did not address it at all. The training dataset was not used in the training of the models at all, due to the fact it was much noisier than validation. 
-On cleaning the training dataset
+
+### On cleaning the training dataset
+
 My idea to clean the train set was to generate pseudo-labels using the final ensemble and then compute matches between ground-truth and pseudo-labels. True-positive matches could be kept as high-confidence labels and ignore unmatched objects at the level of the loss function. The reasoning behind this scheme is simple - if the model predictions agree with ground truth - that's probably a correct label. However, for false-positive and false-negative mismatches, we don't know who's wrong and a safer solution is to "turn off" training signal for such samples (One still can use Shannon's regularization for these objects and benefit from it).
 
 
 For the training, I extracted 1024x1024 patches around the particular object or just the random tile from the scene with probabilities of 0.9 and 0.1 accordingly. For the first case, the object was not picked at random but rather concerning its vessel/fishing status, whether it's an on-shore of the off-shore object and how many objects are in its neighborhood. 
 In simple words, we want to balance vessel/non-vessel, fishing/non-fishing, and on-shore/off-shore objects and avoid overfitting on crowded regions (like wind turbine farms). This balancing scheme also makes it possible to use BCE loss (with label smoothing) for training without any bells and whistles. Focal loss is a known method to address the class imbalance, however, in this scenario when label noise is present, it renders Focal loss practically unusable.
 
+
 For the objectness head, I've used reduced focal loss from [1]. Heatmap encoding was changed from the original object-size dependent scheme to the fixed radius of 3px around each object. This worked very well in practice since the size variation in pixel space was really small. Also, using a fixed size radius solved the problem of encoding objects of unknown lengths.  
 
+
 Classification heads we trained with weighted BCE loss with label smoothing of 0.05 and label radius of 2px around object center[7].  The weighting matrix put the maximum weight of 1 to pixels in the object center and decreased towards 0 for pixels outside the 2px radius. This effectively increased the number of samples to train the classifier head ~40 times and helped the model to converge faster. 
+
 
 For size regression, I used MSE loss in pixel space with the same weighting approach as for classification heads and loss scale 0.1. Lastly, for the offset head, I used an MSE loss and loss scale of 0.001.
  
@@ -133,10 +164,15 @@ As a data augmentations pipeline, I used Albumentations[4] library for which I'v
 
 ## Hardware & Training Time
 The training was done using 2x3090 GPUs using PyTorch 1.9 in DDP/FP16/SyncBN mode.
-Training time:
+
+### Training time:
 * B4 - ~6 hours per fold
 * B5 - ~9 hours per fold
 * V2S - ~6hours per fold
+
+### Inference time:
+Final ensemble of 12 models with flip-lr TTA - up to 12 minutes per scene.
+
 
 # References
 - [1] https://arxiv.org/abs/1904.07850
@@ -146,32 +182,4 @@ Training time:
 - [5] https://github.com/rwightman/pytorch-image-models
 - [6] https://github.com/BloodAxe/pytorch-toolbelt
 - [7] https://arxiv.org/abs/1909.00700
-
-
-## b5_unet_s2
-
-| Model      | Fold 0 | Fold 1 | Fold 2 | Fold 3 | Holdout | Mean    |
-|------------|--------|--------|--------|--------|---------|---------|
-| Objectness | 0.250  | 0.325  | 0.35   | 0.3    | 0.51    | 0.30625 |
-| Vessel     | 0.3673 | 0.3469 | 0.4081 | 0.1632 | 0.5306  | 0.3213  |
-| Fishing    | 0.4489 | 0.6734 | 0.4489 | 0.1836 | 0.4081  | 0.4387  |
-| Aggregate  | 0.6209 | 0.5104 | 0.5252 | 0.5975 | 0.6344  | 0.5635 |
-
-## v2s_unet_s2
-
-| Model      | Fold 0 | Fold 1 | Fold 2 | Fold 3 | Holdout | Mean    |
-|------------|--------|--------|--------|--------|---------|---------|
-| Objectness | 0.4    | 0.4    | 0.4    | 0.4    | 0.51    | 0.4     |
-| Vessel     | 0.6938 | 0.0816 | 0.5102 | 0.3637 | 0.5306  | 0.4123  |
-| Fishing    | 0.2448 | 0.3061 | 0.6734 | 0.4081 | 0.4285  | 0.4081  |
-| Aggregate  | 0.5990 | 0.5127 | 0.5284 | 0.6189 | 0.529   | 0.56475 |
-
-## b4_unet_s2 
-
-| Model      | Fold 0 | Fold 1 | Fold 2 | Fold 3 | Holdout | Mean    |
-|------------|--------|--------|--------|--------|---------|---------|
-| Objectness | 0.475  | 0.475  | 0.5    | 0.45   | 0.57    | 0.494   |
-| Vessel     | 0.1836 | 0.2040 | 0.5102 | 0.4693 | 0.3265  | 0.33872 |
-| Fishing    | 0.1836 | 0.3673 | 0.3673 | 0.448  | 0.3877  | 0.35078 |
-| Aggregate  | 0.5829 | 0.5110 | 0.5217 | 0.6072 | 0.4944  | 0.5557  |
 
