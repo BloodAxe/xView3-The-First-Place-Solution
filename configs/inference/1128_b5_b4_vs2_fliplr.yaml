@@ -11,20 +11,20 @@ ensemble:
     - CENTERNET_OUTPUT_FISHING_MAP
   with_offset: True
   models:
-    - runs/211117_10_52_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold0/checkpoints_metrics_aggregate/best.pth
-    - runs/211117_00_11_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold1/checkpoints_metrics_aggregate/best.pth
-    - runs/211117_17_08_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold2/checkpoints_metrics_aggregate/best.pth
-    - runs/211118_00_30_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold3/checkpoints_metrics_aggregate/best.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211117_00_11_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold1.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211117_10_52_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold0.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211117_17_08_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold2.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211118_00_30_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold3.pth
 
-    - runs/211119_08_05_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold0/checkpoints_metrics_aggregate/best.pth
-    - runs/211119_11_35_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold1/checkpoints_metrics_aggregate/best.pth
-    - runs/211119_21_11_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold2/checkpoints_metrics_aggregate/best.pth
-    - runs/211120_01_38_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold3/checkpoints_metrics_aggregate/best.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211119_08_05_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold0.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211119_11_35_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold1.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211119_21_11_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold2.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211120_01_38_v2s_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold3.pth
 
-    - runs/211125_23_57_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold0/checkpoints_metrics_aggregate/best.pth
-    - runs/211126_16_53_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold1/checkpoints_metrics_aggregate/best.pth
-    - runs/211127_02_14_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold2/checkpoints_metrics_aggregate/best.pth
-    - runs/211127_09_29_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold3/checkpoints_metrics_aggregate/best.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211125_23_57_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold0.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211126_16_53_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold1.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211127_02_14_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold2.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211127_09_29_b5_unet_s2_full_4fold_circlenet_loss_flips_light_medium_fold3.pth
 
 inference:
     channels_last: False
@@ -36,133 +36,10 @@ inference:
     fp16: True
 
 thresholds:
-  # Average of 4 folds
-  # | Objectness | 0.250  | 0.325  | 0.35   | 0.3    | 0.      | 0.30625 |
-  #| Vessel     | 0.3673 | 0.3469 | 0.4081 | 0.1632 | 0.      | 0.3213  |
-  #| Fishing    | 0.4489 | 0.6734 | 0.4489 | 0.1836 | 0.      | 0.4387  |
-
-  # Average of 4 folds
-  - objectness: 0.494
+  - objectness: 0.300
     is_vessel: 0.338
     is_fishing: 0.350
 
-  - objectness: 0.3
-    is_vessel: 0.321
-    is_fishing: 0.438
-
-  - objectness: 0.31
-    is_vessel: 0.321
-    is_fishing: 0.438
-
-  - objectness: 0.32
-    is_vessel: 0.321
-    is_fishing: 0.438
-
-  - objectness: 0.32
-    is_vessel: 0.321
-    is_fishing: 0.438
-
-  - objectness: 0.34
-    is_vessel: 0.321
-    is_fishing: 0.438
-
-  - objectness: 0.35
-    is_vessel: 0.321
-    is_fishing: 0.438
-
-  # Holdout
-  - objectness: 0.5
-    is_vessel: 0.326
-    is_fishing: 0.387
-
-  # Manual
-  - objectness: 0.41
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.40
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.39
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.38
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.37
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.36
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.35
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.34
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.34
-    is_vessel: 0.338
-    is_fishing: 0.325
-
-  - objectness: 0.34
-    is_vessel: 0.338
-    is_fishing: 0.300
-
-  - objectness: 0.34
-    is_vessel: 0.350
-    is_fishing: 0.325
-
-  - objectness: 0.34
-    is_vessel: 0.325
-    is_fishing: 0.300
-
-  - objectness: 0.34
-    is_vessel: 0.300
-    is_fishing: 0.300
-
-  - objectness: 0.33
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.32
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.31
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.30
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.42
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.41
-    is_vessel: 0.326
-    is_fishing: 0.387
-
-  - objectness: 0.425
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.45
-    is_vessel: 0.338
-    is_fishing: 0.350
-
-  - objectness: 0.475
-    is_vessel: 0.338
-    is_fishing: 0.350
 
 evaluation:
   objectness_thresholds:
