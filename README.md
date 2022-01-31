@@ -5,6 +5,20 @@ It scores the first place on the public LB with aggregate score of 0.603 and the
 
 # Installation & Reproducing results
 
+## Expected dataset structure 
+
+All following scripts will use environment variable `XVIEW3_DIR` which should point to the xView 3 dataset folder with
+following directory structure:
+
+```
+ls -l $XVIEW3_DIR
+
+full/
+test/
+train.csv
+validation.csv
+```
+
 ## Inference
 
 To reproduce the winning submission results, first you need to install the required packages. The easiest way is to 
@@ -25,7 +39,7 @@ If you encounter issues with running this step, copy and put [traced_ensemble.ji
 
 ## Training
 
-There are separate training scripts included for each model. They are indended for 2x3090 setup, but you may adjust them to your hardward:
+There are separate training scripts included for each model. They are indented for 2x3090 setup, but you may adjust them to your hardware:
 * `XVIEW3_DIR=/path/to/dataset/root sh scripts/b4_unet_s2.sh`
 * `XVIEW3_DIR=/path/to/dataset/root sh scripts/b5_unet_s2.sh`
 * `XVIEW3_DIR=/path/to/dataset/root sh scripts/v2s_unet_s2_full.sh`
@@ -67,7 +81,7 @@ I further empirically proved this statement by measuring the localization f1 sco
 
 I experimented with several variants of CircleNet architecture during the time of competition. 
 After running dozens of architecture search experiments I selected three architectures that performed the best.
-In this challenge, due to the time constraint for the inference, I didn't consider heavy encoders (B7, V2L, Transformers). Instead, I used the deep ensembling [3] technique to an average output of different smaller models to reduce the variance of my predictions. And the ensemble of N smaller models has been proven to work better than a single giant network. My best performing solution is an ensemble of 12 models (3x4 scheme - Three architectures from above - B4, B5 & V2S, 4 folds for each architecture). Ensembling is also known to be a good way to fight the label noise, which was present in the training data (more on this in the next section).
+In this challenge, due to the time constraint for the inference, I didn't consider heavy encoders (B7, V2L, Transformers). Instead, I used the deep ensemble [3] technique to an average output of different smaller models to reduce the variance of my predictions. And the ensemble of N smaller models has been proven to work better than a single giant network. My best performing solution is an ensemble of 12 models (3x4 scheme - Three architectures from above - B4, B5 & V2S, 4 folds for each architecture). Ensembling is also known to be a good way to fight the label noise, which was present in the training data (more on this in the next section).
 
 * EfficientNet B4 Encoder with Unet Decoder and decoupled head with GroupNorm and PixelShuffle (b4_unet_s2)
 * EfficientNet B5 Encoder with Unet Decoder and decoupled head with GroupNorm and PixelShuffle (b5_unet_s2)
@@ -107,7 +121,7 @@ However, I observed a significant CV/LB discrepancy and later switched to a leak
 | validation |       7148 |  11957 |        2930 |     961 |     13053 |       6171 |                4478 |                   25 |
 
 
-After getting to 0.5+ zone with SAR-only data I tried to include supplementary data (bathymetry, wind & ice mask) into the model. Unfortunately, all my attempts failed and did not bring any gains and I ditched this effort and kept using 2-channels SAR input. I think there are a couple of reasons why extra data didn't help:
+After getting to 0.5+ zone with SAR-only data I tried to include supplementary data (bathymetry, wind & ice mask) into the model. Unfortunately, all my attempts failed and did not bring any gains, and I ditched this effort and kept using 2-channels SAR input. I think there are a couple of reasons why extra data didn't help:
 The limiting factor was labels quality, not the lack of signal in the input data. 
  * Bathymetry signal was not that important 
  * The model could infer wind speed/direction from the SAR signal implicitly
@@ -140,11 +154,11 @@ As for the errors in the ground truth, fortunately, there were not many of them 
 My idea to clean the train set was to generate pseudo-labels using the final ensemble and then compute matches between ground-truth and pseudo-labels. True-positive matches could be kept as high-confidence labels and ignore unmatched objects at the level of the loss function. The reasoning behind this scheme is simple - if the model predictions agree with ground truth - that's probably a correct label. However, for false-positive and false-negative mismatches, we don't know who's wrong and a safer solution is to "turn off" training signal for such samples (One still can use Shannon's regularization for these objects and benefit from it).
 
 
-For the training, I extracted 1024x1024 patches around the particular object or just the random tile from the scene with probabilities of 0.9 and 0.1 accordingly. For the first case, the object was not picked at random but rather concerning its vessel/fishing status, whether it's an on-shore of the off-shore object and how many objects are in its neighborhood. 
-In simple words, we want to balance vessel/non-vessel, fishing/non-fishing, and on-shore/off-shore objects and avoid overfitting on crowded regions (like wind turbine farms). This balancing scheme also makes it possible to use BCE loss (with label smoothing) for training without any bells and whistles. Focal loss is a known method to address the class imbalance, however, in this scenario when label noise is present, it renders Focal loss practically unusable.
+For the training, I extracted 1024x1024 patches around the particular object or just the random tile from the scene with probabilities of 0.9 and 0.1 accordingly. For the first case, the object was not picked at random but rather concerning its vessel/fishing status, whether it's an on-shore of the offshore object and how many objects are in its neighborhood. 
+In simple words, we want to balance vessel/non-vessel, fishing/non-fishing, and on-shore/offshore objects and avoid overfitting on crowded regions (like wind turbine farms). This balancing scheme also makes it possible to use BCE loss (with label smoothing) for training without any bells and whistles. Focal loss is a known method to address the class imbalance, however, in this scenario when label noise is present, it renders Focal loss practically unusable.
 
 
-For the objectness head, I've used reduced focal loss from [1]. Heatmap encoding was changed from the original object-size dependent scheme to the fixed radius of 3px around each object. This worked very well in practice since the size variation in pixel space was really small. Also, using a fixed size radius solved the problem of encoding objects of unknown lengths.  
+For the objectness head, I've used reduced focal loss from [1]. Heatmap encoding was changed from the original object-size dependent scheme to the fixed radius of 3px around each object. This worked very well in practice since the size variation in pixel space was tiny. Also, using a fixed size radius solved the problem of encoding objects of unknown lengths.  
 
 
 Classification heads we trained with weighted BCE loss with label smoothing of 0.05 and label radius of 2px around object center[7].  The weighting matrix put the maximum weight of 1 to pixels in the object center and decreased towards 0 for pixels outside the 2px radius. This effectively increased the number of samples to train the classifier head ~40 times and helped the model to converge faster. 
@@ -161,7 +175,7 @@ During training, I applied a set of photometric & spatial augmentations to train
 * Small scale change (+- 10% image size)
 * Minor Elastic transformation  
 
-Generally, data augmentation for the SAR domain is much harder than for regular RGB images. Therefore set of image augmentations is very limited and it was carefully picked to prevent changing original data distribution.
+Generally, data augmentation for the SAR domain is much harder than for regular RGB images. Therefore, set of image augmentations is very limited, and it was carefully picked to prevent changing original data distribution.
 As a data augmentations pipeline, I used Albumentations[4] library for which I've written some custom-made augmentations tailored for the SAR domain (UnclippedRandomBrightnessContrast, UnclippedGaussNoise).
 
 
