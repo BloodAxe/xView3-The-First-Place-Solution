@@ -127,10 +127,10 @@ def vis_detections_opencv(
             is_fishing_str = {0: "", False: "", 1: "/F", True: "/F", IGNORE_LABEL: "/U"}[is_fishing]
 
             if is_vessel_probs is not None:
-                is_vessel_str = "{0}{1:.2f}".format(is_vessel_str, is_vessel_probs[i])
+                is_vessel_str = " {0}{1:.2f}".format(is_vessel_str, is_vessel_probs[i])
 
             if is_fishing_probs is not None:
-                is_fishing_str = "{0}{1:.2f}".format(is_fishing_str, is_fishing_probs[i])
+                is_fishing_str = " {0}{1:.2f}".format(is_fishing_str, is_fishing_probs[i])
 
             caption = "{0}{1}".format(is_vessel_str, is_fishing_str)
             if scores is not None:
