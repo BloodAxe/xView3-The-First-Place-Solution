@@ -56,6 +56,9 @@ MultilabelTargets = namedtuple(
         "is_fishing",
         "lengths",
         "is_near_shore",
+        "is_vessel_probs",
+        "is_fishing_probs",
+        "objectness_probs"
     ),
 )
 
@@ -95,6 +98,22 @@ class XView3DataModule:
         is_fishing[~np.isfinite(is_fishing)] = IGNORE_LABEL
         # is_fishing[is_vessel == 0] = 0 # If it is non-vessel, then by definition it cannot do fishing
 
+        if "objectness_p" in df:
+            objectness_p = df.objectness_p.values
+        else:
+            objectness_p = None
+
+        if "is_vessel_p" in df:
+            is_vessel_p = df.is_vessel_p.values
+        else:
+            is_vessel_p = None
+
+        if "is_fishing_p" in df:
+            is_fishing_p = df.is_fishing_p.values
+        else:
+            is_fishing_p = None
+
+
         return MultilabelTargets(
             centers=centers.reshape((-1, 2)),
             is_vessel=is_vessel.reshape((-1)).astype(int),
@@ -102,6 +121,9 @@ class XView3DataModule:
             lengths=lengths.reshape((-1)),
             confidences=confidences,
             is_near_shore=is_near_shore,
+            is_fishing_probs=is_fishing_p,
+            is_vessel_probs=is_vessel_p,
+            objectness_probs=objectness_p
         )
 
     @classmethod

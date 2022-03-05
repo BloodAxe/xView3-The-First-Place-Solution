@@ -1,0 +1,64 @@
+# OMP_NUM_THREADS=8 torchrun --standalone --nnodes=1 --nproc_per_node=2 submit_multilabel_ensemble.py configs/inference/1128_b5_b4_vs2_fliplr.yaml
+# OMP_NUM_THREADS=16 torchrun --standalone --nnodes=1 --nproc_per_node=2 evaluate_multilabel_ensemble.py configs/inference/1128_b5_b4_vs2_fliplr.yaml
+
+ensemble:
+  tta:
+  activation_after: after_model
+  softmax_outputs:
+  sigmoid_outputs:
+    - CENTERNET_OUTPUT_OBJECTNESS_MAP
+    - CENTERNET_OUTPUT_VESSEL_MAP
+    - CENTERNET_OUTPUT_FISHING_MAP
+  with_offset: True
+  models:
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211117_00_11_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold1.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211117_10_52_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold0.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211117_17_08_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold2.pth
+    - https://github.com/BloodAxe/xView3-The-First-Place-Solution/releases/download/1.0/211118_00_30_b4_unet_s2_leaky_valid_4fold_rfl_soft_bce_mse_regularized_flips_light_medium_fold3.pth
+
+inference:
+    channels_last: False
+    use_traced_model: True
+    tile_size: 2048
+    tile_step: 1536
+    accumulate_on_gpu: False
+    batch_size: 1
+    fp16: True
+
+thresholds:
+  - objectness: 0.300
+    is_vessel: 0.338
+    is_fishing: 0.350
+
+
+evaluation:
+  objectness_thresholds:
+    - 0.35
+    - 0.36
+    - 0.37
+    - 0.38
+    - 0.39
+    - 0.40
+    - 0.41
+    - 0.42
+    - 0.43
+    - 0.44
+    - 0.45
+    - 0.46
+    - 0.47
+    - 0.48
+    - 0.49
+    - 0.50
+    - 0.51
+    - 0.52
+    - 0.53
+    - 0.54
+    - 0.55
+    - 0.56
+    - 0.57
+    - 0.58
+    - 0.59
+    - 0.60
+
+
+submission_dir: submissions/light
